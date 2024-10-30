@@ -1,6 +1,8 @@
 """
 
-Sample bot that shows the query sent to the bot.
+Sample bot that echoes back messages.
+
+This is the simplest possible bot and a great place to start if you want to build your own bot.
 
 """
 
@@ -9,22 +11,19 @@ from constants import POE_ACCESS_KEY, BOT_NAME
 from typing import AsyncIterable
 
 import fastapi_poe as fp
-from devtools import PrettyFormat
 from modal import App, Image, asgi_app
+from devtools import PrettyFormat
 
 pformat = PrettyFormat(width=85)
 
 
-class LogBot(fp.PoeBot):
+class EchoBot(fp.PoeBot):
     async def get_response(
         self, request: fp.QueryRequest
     ) -> AsyncIterable[fp.PartialResponse]:
-        yield fp.PartialResponse(text="```python\n" + pformat(request) + "\n```")
-
-    async def get_settings(self, setting: fp.SettingsRequest) -> fp.SettingsResponse:
-        return fp.SettingsResponse(
-            allow_attachments=True, enable_image_comprehension=True
-        )
+        last_message = request.query[-1].content
+        print(pformat(request))
+        yield fp.PartialResponse(text=last_message)
 
 
 REQUIREMENTS = ["fastapi-poe==0.0.48", "devtools==0.12.2"]
@@ -35,8 +34,8 @@ app = App("log-bot-poe")
 @app.function(image=image)
 @asgi_app()
 def fastapi_app():
-    bot = LogBot()
+    bot = EchoBot()
     # see https://creator.poe.com/docs/quick-start#configuring-the-access-credentials
     app = fp.make_app(bot, access_key=POE_ACCESS_KEY, bot_name=BOT_NAME)
-    # app = fp.make_app(bot, allow_without_key=True)
+    # # app = fp.make_app(bot, allow_without_key=True)
     return app

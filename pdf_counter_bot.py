@@ -56,6 +56,6 @@ app = App("pdf-counter-poe")
 def fastapi_app():
     bot = PDFSizeBot()
     # see https://creator.poe.com/docs/quick-start#configuring-the-access-credentials
-    # app = fp.make_app(bot, access_key=<YOUR_ACCESS_KEY>, bot_name=<YOUR_BOT_NAME>)
-    app = fp.make_app(bot, allow_without_key=True)
+        app = fp.make_app(bot, access_key=POE_ACCESS_KEY, bot_name=BOT_NAME)
+    # app = fp.make_app(bot, allow_without_key=True)
     return app
